@@ -16,7 +16,8 @@ public class ProtocolMapper implements DtoMapper<Protocol, ProtocolDTO> {
                 entity.getDescription(),
                 entity.getFileId(),
                 entity.getPatientsIdList(),
-                entity.getSpecific()
+                entity.getSpecific(),
+                entity.getCreatedAt()
         );
     }
 
@@ -29,6 +30,7 @@ public class ProtocolMapper implements DtoMapper<Protocol, ProtocolDTO> {
                 .fileId(protocolDTO.fileId())
                 .patientsIdList(protocolDTO.patientsIdList())
                 .isSpecific(protocolDTO.isSpecific())
+                .createdAt(protocolDTO.createdAt())
                 .build();
     }
 }

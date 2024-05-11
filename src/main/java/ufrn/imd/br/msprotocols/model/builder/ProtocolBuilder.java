@@ -2,6 +2,7 @@ package ufrn.imd.br.msprotocols.model.builder;
 
 import ufrn.imd.br.msprotocols.model.Protocol;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class ProtocolBuilder {
@@ -12,6 +13,8 @@ public class ProtocolBuilder {
     private Long fileId;
     private List<Long> patientsIdList;
     private Boolean isSpecific;
+
+    private ZonedDateTime createdAt;
 
     public ProtocolBuilder id(Long id){
         this.id = id;
@@ -43,6 +46,11 @@ public class ProtocolBuilder {
         return this;
     }
 
+    public ProtocolBuilder createdAt(ZonedDateTime createdAt) {
+        this.createdAt = createdAt;
+        return this;
+    }
+
     public Protocol build(){
         Protocol protocol= new Protocol();
         protocol.setId(id);
@@ -51,6 +59,7 @@ public class ProtocolBuilder {
         protocol.setFileId(fileId);
         protocol.setPatientsIdList(patientsIdList);
         protocol.setSpecific(isSpecific);
+        protocol.setCreatedAt(createdAt);
         return protocol;
     }
 }
