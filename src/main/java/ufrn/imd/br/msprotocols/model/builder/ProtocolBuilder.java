@@ -1,0 +1,56 @@
+package ufrn.imd.br.msprotocols.model.builder;
+
+import ufrn.imd.br.msprotocols.model.Protocol;
+
+import java.util.List;
+
+public class ProtocolBuilder {
+
+    private Long id;
+    private String name;
+    private String description;
+    private Long fileId;
+    private List<Long> patientsIdList;
+    private Boolean isSpecific;
+
+    public ProtocolBuilder id(Long id){
+        this.id = id;
+        return this;
+    }
+
+    public ProtocolBuilder description(String description){
+        this.description = description;
+        return this;
+    }
+
+    public ProtocolBuilder name(String name){
+        this.name = name;
+        return this;
+    }
+
+    public ProtocolBuilder patientsIdList(List<Long> patientsIdList){
+        this.patientsIdList = patientsIdList;
+        return this;
+    }
+
+    public ProtocolBuilder fileId(Long fileId){
+        this.fileId = fileId;
+        return this;
+    }
+
+    public ProtocolBuilder isSpecific(Boolean isSpecific){
+        this.isSpecific = isSpecific;
+        return this;
+    }
+
+    public Protocol build(){
+        Protocol protocol= new Protocol();
+        protocol.setId(id);
+        protocol.setName(name);
+        protocol.setDescription(description);
+        protocol.setFileId(fileId);
+        protocol.setPatientsIdList(patientsIdList);
+        protocol.setSpecific(isSpecific);
+        return protocol;
+    }
+}
