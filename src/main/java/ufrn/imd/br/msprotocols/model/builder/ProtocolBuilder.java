@@ -11,6 +11,7 @@ public class ProtocolBuilder {
     private String name;
     private String description;
     private Long fileId;
+    private Long doctorId;
     private List<Long> patientsIdList;
     private Boolean isSpecific;
 
@@ -41,6 +42,11 @@ public class ProtocolBuilder {
         return this;
     }
 
+    public ProtocolBuilder doctorId(Long doctorId){
+        this.doctorId = doctorId;
+        return this;
+    }
+
     public ProtocolBuilder isSpecific(Boolean isSpecific){
         this.isSpecific = isSpecific;
         return this;
@@ -57,6 +63,7 @@ public class ProtocolBuilder {
         protocol.setName(name);
         protocol.setDescription(description);
         protocol.setFileId(fileId);
+        protocol.setDoctorId(doctorId);
         protocol.setPatientsIdList(patientsIdList);
         protocol.setSpecific(isSpecific);
         protocol.setCreatedAt(createdAt);

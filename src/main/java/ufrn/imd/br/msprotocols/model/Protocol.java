@@ -27,6 +27,10 @@ public class Protocol extends BaseEntity {
     @Column(name = "file_id", nullable = false, unique = true)
     private Long fileId;
 
+    @NotNull
+    @Column(name = "doctor_id", nullable = false)
+    private Long doctorId;
+
     @Column(name = "patients_id_list")
     @ElementCollection
     private List<Long> patientsIdList;
@@ -61,6 +65,14 @@ public class Protocol extends BaseEntity {
 
     public void setFileId(Long fileId) {
         this.fileId = fileId;
+    }
+
+    public Long getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(Long doctorId) {
+        this.doctorId = doctorId;
     }
 
     public List<Long> getPatientsIdList() {

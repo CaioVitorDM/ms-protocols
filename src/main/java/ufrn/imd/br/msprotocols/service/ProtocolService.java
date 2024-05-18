@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ufrn.imd.br.msprotocols.dto.ProtocolDTO;
 import ufrn.imd.br.msprotocols.mappers.DtoMapper;
+import java.util.Optional;
 
 import ufrn.imd.br.msprotocols.mappers.ProtocolMapper;
 import ufrn.imd.br.msprotocols.model.Protocol;
@@ -35,18 +36,28 @@ public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
     }
 
     @Override
-    public ProtocolDTO create(ProtocolDTO dto) {
-        Protocol entity = getDtoMapper().toEntity(dto);
-
-        validateBeforeSave(entity);
-        return getDtoMapper().toDto(getRepository().save(entity));
-    }
-
-    @Override
     public void validateBeforeSave(Protocol entity){
         GenericService.super.validateBeforeSave(entity);
         validateFileId(entity.getFileId());
     }
+
+    @Override
+    public void validateBeforeUpdate(Protocol entity){
+        GenericService.super.validateBeforeUpdate(entity);
+        validateFileId(entity.getFileId(), entity.getId());
+    }
+
+    private void validateFileId(Long fileId, Long protocolId) {
+        Optional<Protocol> existingProtocolWithFile = protocolRepository.findByFileIdAndIdNot(fileId, protocolId);
+
+        if (existingProtocolWithFile.isPresent()) {
+            throw new BusinessException(
+                    "Arquivo inválido: " + fileId + ". Já existe outro protocolo cadastrado com esse arquivo.",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+    }
+
 
     private void validateFileId(Long id){
         if(protocolRepository.existsByFileId(id)){

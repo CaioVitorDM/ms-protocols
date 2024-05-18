@@ -8,7 +8,8 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ProtocolDTO(Long id, String name,
                           String description, Long fileId,
-                          List<Long>patientsIdList, Boolean isSpecific, ZonedDateTime createdAt) implements EntityDTO {
+                          Long doctorId, List<Long>patientsIdList,
+                          Boolean isSpecific, ZonedDateTime createdAt) implements EntityDTO {
     @Override
     public EntityDTO toResponse() {
         return new ProtocolDTO(
@@ -16,6 +17,7 @@ public record ProtocolDTO(Long id, String name,
                 this.name(),
                 this.description(),
                 this.fileId(),
+                this.doctorId(),
                 this.patientsIdList(),
                 this.isSpecific(),
                 this.createdAt()
