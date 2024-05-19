@@ -10,7 +10,6 @@ import ufrn.imd.br.msprotocols.dto.ProtocolDTO;
 import ufrn.imd.br.msprotocols.model.Protocol;
 import ufrn.imd.br.msprotocols.service.ProtocolService;
 
-@CrossOrigin(origins = "http://localhost:4200/")
 @RestController
 @RequestMapping("/v1/protocols")
 public class ProtocolController extends GenericController<Protocol, ProtocolDTO, ProtocolService>{
