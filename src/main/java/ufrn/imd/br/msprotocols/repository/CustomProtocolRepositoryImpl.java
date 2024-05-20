@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 
 @Transactional
-@Repository
 public class CustomProtocolRepositoryImpl implements CustomProtocolRepository {
 
     @PersistenceContext
@@ -44,7 +43,8 @@ public class CustomProtocolRepositoryImpl implements CustomProtocolRepository {
             whereClause.append(" AND LOWER(p.name) LIKE LOWER(:name)");
         }
         if (createdAt != null && !createdAt.trim().isEmpty()) {
-            whereClause.append(" AND FUNCTION('DATE', p.createdAt) = :createdAt");
+        // Analisa o formato da data e adiciona a cláusula WHERE apropriada
+            addDateClause(createdAt, whereClause);
         }
         if (doctorId != null && !doctorId.trim().isEmpty()) {
             whereClause.append(" AND p.doctorId = :doctorId");
@@ -73,14 +73,22 @@ public class CustomProtocolRepositoryImpl implements CustomProtocolRepository {
         return new PageImpl<>(resultList, pageable, count);
     }
 
+    private void addDateClause(String createdAt, StringBuilder whereClause) {
+        if (createdAt.matches("\\d{2}/\\d{2}/\\d{4}")) { // DD/MM/YYYY
+            whereClause.append(" AND FUNCTION('to_char', p.createdAt, 'DD/MM/YYYY') = :createdAt");
+        } else if (createdAt.matches("\\d{2}/\\d{2}")) { // DD/MM
+            whereClause.append(" AND FUNCTION('to_char', p.createdAt, 'DD/MM') = :createdAt");
+        } else if (createdAt.matches("\\d{2}")) { // DD
+            whereClause.append(" AND FUNCTION('to_char', p.createdAt, 'DD') = :createdAt");
+        }
+    }
+
     private void setQueryParameters(Query query, String name, String createdAt, String doctorId) {
         if (name != null && !name.trim().isEmpty()) {
             query.setParameter("name", "%" + name + "%");
         }
         if (createdAt != null && !createdAt.trim().isEmpty()) {
-            LocalDate localDate = LocalDate.parse(createdAt, DateTimeFormatter.ISO_LOCAL_DATE);
-            ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneId.systemDefault());
-            query.setParameter("createdAt", zonedDateTime);
+            query.setParameter("createdAt", createdAt);
         }
         if (doctorId != null && !doctorId.trim().isEmpty()) {
             query.setParameter("doctorId", doctorId);
