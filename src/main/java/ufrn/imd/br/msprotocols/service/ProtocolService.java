@@ -1,10 +1,14 @@
 package ufrn.imd.br.msprotocols.service;
 
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ufrn.imd.br.msprotocols.dto.ProtocolDTO;
 import ufrn.imd.br.msprotocols.mappers.DtoMapper;
+
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import ufrn.imd.br.msprotocols.mappers.ProtocolMapper;
@@ -18,11 +22,11 @@ import ufrn.imd.br.msprotocols.utils.exception.BusinessException;
 public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
 
     private final ProtocolRepository protocolRepository;
-    private final ProtocolMapper mapper;
+    private final ProtocolMapper protocolMapper;
 
-    public ProtocolService(ProtocolRepository protocolRepository, ProtocolMapper mapper) {
+    public ProtocolService(ProtocolRepository protocolRepository, ProtocolMapper protocolMapper) {
         this.protocolRepository = protocolRepository;
-        this.mapper = mapper;
+        this.protocolMapper = protocolMapper;
     }
 
     @Override
@@ -32,7 +36,7 @@ public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
 
     @Override
     public DtoMapper<Protocol, ProtocolDTO> getDtoMapper() {
-        return this.mapper;
+        return this.protocolMapper;
     }
 
     @Override
@@ -67,5 +71,10 @@ public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
             );
         }
     }
+
+    public Page<ProtocolDTO> findProtocolsByFilters(String name, String createdAt, String doctorId, Pageable pageable) {
+        return protocolRepository.searchByFilters(name, createdAt, doctorId, pageable).map(protocolMapper::toDto);
+    }
+
 
 }

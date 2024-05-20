@@ -1,6 +1,10 @@
 package ufrn.imd.br.msprotocols.controller;
 
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +13,8 @@ import ufrn.imd.br.msprotocols.dto.EntityDTO;
 import ufrn.imd.br.msprotocols.dto.ProtocolDTO;
 import ufrn.imd.br.msprotocols.model.Protocol;
 import ufrn.imd.br.msprotocols.service.ProtocolService;
+
+import java.time.ZonedDateTime;
 
 @RestController
 @RequestMapping("/v1/protocols")
@@ -36,5 +42,22 @@ public class ProtocolController extends GenericController<Protocol, ProtocolDTO,
 //                )
 //        );
 //    }
+
+    @GetMapping("/find-protocols")
+    public ResponseEntity<ApiResponseDTO<Page<ProtocolDTO>>> findProtocols(
+            @ParameterObject Pageable pageable,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String createdAt,
+            @RequestParam(required = false) String doctorId)
+    {
+        return ResponseEntity.ok(new ApiResponseDTO<>(
+                true,
+                "Success: protocols retrieved successfully",
+                service.findProtocolsByFilters(name, createdAt, doctorId, pageable),
+                null
+        ));
+    }
+
+
 
 }
