@@ -74,12 +74,12 @@ public class CustomProtocolRepositoryImpl implements CustomProtocolRepository {
     }
 
     private void addDateClause(String createdAt, StringBuilder whereClause) {
-        if (createdAt.matches("\\d{2}/\\d{2}/\\d{4}")) { // DD/MM/YYYY
-            whereClause.append(" AND FUNCTION('to_char', p.createdAt, 'DD/MM/YYYY') = :createdAt");
-        } else if (createdAt.matches("\\d{2}/\\d{2}")) { // DD/MM
-            whereClause.append(" AND FUNCTION('to_char', p.createdAt, 'DD/MM') = :createdAt");
-        } else if (createdAt.matches("\\d{2}")) { // DD
-            whereClause.append(" AND FUNCTION('to_char', p.createdAt, 'DD') = :createdAt");
+        if (createdAt.matches("\\d{2}/\\d{2}/\\d{4}")) {  // Formato DD/MM/YYYY
+            whereClause.append(" AND FUNCTION('to_char', p.createdAt, 'DD/MM/YYYY') = :createdAtFull");
+        } else if (createdAt.matches("\\d{2}/\\d{2}/") || createdAt.matches("\\d{2}/\\d{2}")) {  // Formatos DD/MM/ ou DD/MM
+            whereClause.append(" AND FUNCTION('to_char', p.createdAt, 'DD/MM') = :createdAtMonthDay");
+        } else if (createdAt.matches("\\d{2}/") || createdAt.matches("\\d{2}")) {  // Formatos DD/ ou DD
+            whereClause.append(" AND FUNCTION('to_char', p.createdAt, 'DD') = :createdAtDay");
         }
     }
 
@@ -88,10 +88,19 @@ public class CustomProtocolRepositoryImpl implements CustomProtocolRepository {
             query.setParameter("name", "%" + name + "%");
         }
         if (createdAt != null && !createdAt.trim().isEmpty()) {
-            query.setParameter("createdAt", createdAt);
+            if (createdAt.matches("\\d{2}/\\d{2}/\\d{4}")) {
+                query.setParameter("createdAtFull", createdAt);
+            } else if (createdAt.matches("\\d{2}/\\d{2}/") || createdAt.matches("\\d{2}/\\d{2}")) {
+                query.setParameter("createdAtMonthDay", createdAt.replaceAll("/$", ""));
+            } else if (createdAt.matches("\\d{2}/") || createdAt.matches("\\d{2}")) {
+                query.setParameter("createdAtDay", createdAt.replace("/", ""));
+            }
         }
         if (doctorId != null && !doctorId.trim().isEmpty()) {
             query.setParameter("doctorId", doctorId);
         }
     }
+
+
+
 }
