@@ -43,8 +43,7 @@ public class CustomProtocolRepositoryImpl implements CustomProtocolRepository {
             whereClause.append(" AND LOWER(p.name) LIKE LOWER(:name)");
         }
         if (createdAt != null && !createdAt.trim().isEmpty()) {
-        // Analisa o formato da data e adiciona a cláusula WHERE apropriada
-            addDateClause(createdAt, whereClause);
+            whereClause.append(" AND FUNCTION('DATE', p.createdAt) = :createdAt");
         }
         if (doctorId != null && !doctorId.trim().isEmpty()) {
             whereClause.append(" AND p.doctorId = :doctorId");
@@ -73,34 +72,17 @@ public class CustomProtocolRepositoryImpl implements CustomProtocolRepository {
         return new PageImpl<>(resultList, pageable, count);
     }
 
-    private void addDateClause(String createdAt, StringBuilder whereClause) {
-        if (createdAt.matches("\\d{2}/\\d{2}/\\d{4}")) {  // Formato DD/MM/YYYY
-            whereClause.append(" AND FUNCTION('to_char', p.createdAt, 'DD/MM/YYYY') = :createdAtFull");
-        } else if (createdAt.matches("\\d{2}/\\d{2}/") || createdAt.matches("\\d{2}/\\d{2}")) {  // Formatos DD/MM/ ou DD/MM
-            whereClause.append(" AND FUNCTION('to_char', p.createdAt, 'DD/MM') = :createdAtMonthDay");
-        } else if (createdAt.matches("\\d{2}/") || createdAt.matches("\\d{2}")) {  // Formatos DD/ ou DD
-            whereClause.append(" AND FUNCTION('to_char', p.createdAt, 'DD') = :createdAtDay");
-        }
-    }
-
     private void setQueryParameters(Query query, String name, String createdAt, String doctorId) {
         if (name != null && !name.trim().isEmpty()) {
             query.setParameter("name", "%" + name + "%");
         }
         if (createdAt != null && !createdAt.trim().isEmpty()) {
-            if (createdAt.matches("\\d{2}/\\d{2}/\\d{4}")) {
-                query.setParameter("createdAtFull", createdAt);
-            } else if (createdAt.matches("\\d{2}/\\d{2}/") || createdAt.matches("\\d{2}/\\d{2}")) {
-                query.setParameter("createdAtMonthDay", createdAt.replaceAll("/$", ""));
-            } else if (createdAt.matches("\\d{2}/") || createdAt.matches("\\d{2}")) {
-                query.setParameter("createdAtDay", createdAt.replace("/", ""));
-            }
+            LocalDate localDate = LocalDate.parse(createdAt, DateTimeFormatter.ISO_LOCAL_DATE);
+            ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneId.systemDefault());
+            query.setParameter("createdAt", zonedDateTime);
         }
         if (doctorId != null && !doctorId.trim().isEmpty()) {
             query.setParameter("doctorId", doctorId);
         }
     }
-
-
-
 }
