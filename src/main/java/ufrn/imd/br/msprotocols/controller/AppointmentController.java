@@ -1,8 +1,16 @@
 package ufrn.imd.br.msprotocols.controller;
 
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ufrn.imd.br.msprotocols.dto.ApiResponseDTO;
 import ufrn.imd.br.msprotocols.dto.AppointmentDTO;
+import ufrn.imd.br.msprotocols.dto.ProtocolDTO;
 import ufrn.imd.br.msprotocols.model.Appointment;
 import ufrn.imd.br.msprotocols.service.AppointmentService;
 
@@ -16,5 +24,21 @@ public class AppointmentController extends GenericController<Appointment, Appoin
      */
     protected AppointmentController(AppointmentService service) {
         super(service);
+    }
+
+    @GetMapping("/find-appointments")
+    public ResponseEntity<ApiResponseDTO<Page<AppointmentDTO>>> findAppointments(
+            @ParameterObject Pageable pageable,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String patientId,
+            @RequestParam(required = false) String local,
+            @RequestParam(required = false) String appointmentDate)
+    {
+        return ResponseEntity.ok(new ApiResponseDTO<>(
+                true,
+                "Success: appointments retrieved successfully",
+                service.findAppointmentsByFilters(title, patientId, local, appointmentDate, pageable),
+                null
+        ));
     }
 }

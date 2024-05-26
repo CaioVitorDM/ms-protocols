@@ -1,8 +1,11 @@
 package ufrn.imd.br.msprotocols.service;
 
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ufrn.imd.br.msprotocols.dto.AppointmentDTO;
+import ufrn.imd.br.msprotocols.dto.ProtocolDTO;
 import ufrn.imd.br.msprotocols.mappers.AppointmentMapper;
 import ufrn.imd.br.msprotocols.mappers.DtoMapper;
 import ufrn.imd.br.msprotocols.model.Appointment;
@@ -29,5 +32,9 @@ public class AppointmentService implements GenericService<Appointment, Appointme
     @Override
     public DtoMapper<Appointment, AppointmentDTO> getDtoMapper() {
         return mapper;
+    }
+
+    public Page<AppointmentDTO> findAppointmentsByFilters(String title, String patientId, String local, String appointmentDate, Pageable pageable) {
+        return appointmentRepository.searchByFilters(title, patientId, local, appointmentDate, pageable).map(mapper::toDto);
     }
 }

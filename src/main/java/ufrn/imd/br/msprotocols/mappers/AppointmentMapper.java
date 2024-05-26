@@ -10,6 +10,7 @@ public class AppointmentMapper implements DtoMapper<Appointment, AppointmentDTO>
     public AppointmentDTO toDto(Appointment entity) {
         return new AppointmentDTO(
                 entity.getId(),
+                entity.getTitle(),
                 entity.getPatientId(),
                 entity.getDoctorId(),
                 entity.getLocal(),
@@ -21,6 +22,7 @@ public class AppointmentMapper implements DtoMapper<Appointment, AppointmentDTO>
     public Appointment toEntity(AppointmentDTO appointmentDTO) {
         return Appointment.builder()
                 .id(appointmentDTO.id())
+                .title(appointmentDTO.title())
                 .patientId(appointmentDTO.patientId())
                 .doctorId(appointmentDTO.doctorId())
                 .local(appointmentDTO.local())

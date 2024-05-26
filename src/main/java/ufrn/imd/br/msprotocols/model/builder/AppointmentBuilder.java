@@ -7,6 +7,7 @@ import java.time.ZonedDateTime;
 public class AppointmentBuilder {
 
     private Long id;
+    private String title;
     private Long patientId;
     private Long doctorId;
     private String local;
@@ -14,6 +15,11 @@ public class AppointmentBuilder {
 
     public AppointmentBuilder id(Long id) {
         this.id = id;
+        return this;
+    }
+
+    public AppointmentBuilder title (String title) {
+        this.title = title;
         return this;
     }
 
@@ -40,6 +46,7 @@ public class AppointmentBuilder {
     public Appointment build() {
         Appointment appointment = new Appointment();
         appointment.setId(id);
+        appointment.setTitle(title);
         appointment.setPatientId(patientId);
         appointment.setDoctorId(doctorId);
         appointment.setLocal(local);
