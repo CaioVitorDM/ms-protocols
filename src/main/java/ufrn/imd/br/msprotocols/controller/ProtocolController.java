@@ -48,12 +48,13 @@ public class ProtocolController extends GenericController<Protocol, ProtocolDTO,
             @ParameterObject Pageable pageable,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String createdAt,
+            @RequestParam(required = false) String patientId,
             @RequestParam(required = false) String doctorId)
     {
         return ResponseEntity.ok(new ApiResponseDTO<>(
                 true,
                 "Success: protocols retrieved successfully",
-                service.findProtocolsByFilters(name, createdAt, doctorId, pageable),
+                service.findProtocolsByFilters(name, createdAt, doctorId, patientId, pageable),
                 null
         ));
     }

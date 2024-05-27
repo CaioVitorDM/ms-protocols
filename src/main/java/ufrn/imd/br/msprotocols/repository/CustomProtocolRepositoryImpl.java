@@ -28,7 +28,7 @@ public class CustomProtocolRepositoryImpl implements CustomProtocolRepository {
     private static final String INITIAL = "SELECT p FROM Protocol p WHERE p.active = TRUE ";
 
     @Override
-    public Page<Protocol> searchByFilters(String name, String createdAt, String doctorId, Pageable pageable) {
+    public Page<Protocol> searchByFilters(String name, String createdAt, String doctorId, String patientId, Pageable pageable) {
         StringBuilder whereClause = new StringBuilder();
 
         String orderField = "createdAt";
@@ -38,6 +38,7 @@ public class CustomProtocolRepositoryImpl implements CustomProtocolRepository {
             orderField = pageable.getSort().get().iterator().next().getProperty();
             orderDirection = pageable.getSort().get().iterator().next().getDirection().name();
         }
+
 
         if (name != null && !name.trim().isEmpty()) {
             whereClause.append(" AND LOWER(p.name) LIKE LOWER(:name)");
@@ -49,19 +50,25 @@ public class CustomProtocolRepositoryImpl implements CustomProtocolRepository {
             whereClause.append(" AND p.doctorId = :doctorId");
         }
 
+        if (patientId != null && !patientId.trim().isEmpty()) {
+            whereClause.append(" AND (");
+            whereClause.append(" (p.isSpecific = TRUE AND :patientId MEMBER OF p.patientsIdList)");
+            whereClause.append(" OR (p.isSpecific = FALSE AND p.doctorId = :doctorId)");
+            whereClause.append(")");
+        }
+
         String countQueryStr = "SELECT COUNT(p) FROM Protocol p WHERE p.active = TRUE" + whereClause;
         Query countQuery = entityManager.createQuery(countQueryStr);
-        setQueryParameters(countQuery, name, createdAt, doctorId);
+        setQueryParameters(countQuery, name, createdAt, doctorId, patientId);
 
         long count = ((Number) countQuery.getSingleResult()).longValue();
         if (count == 0) {
             return new PageImpl<>(Collections.emptyList(), pageable, count);
         }
 
-        // Construção da consulta final com paginação
-        String finalQuery = INITIAL + whereClause + " ORDER BY p.createdAt DESC";
+        String finalQuery = INITIAL + whereClause;
         Query query = entityManager.createQuery(finalQuery, Protocol.class);
-        setQueryParameters(query, name, createdAt, doctorId);
+        setQueryParameters(query, name, createdAt, doctorId, patientId);
 
         int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
@@ -72,7 +79,7 @@ public class CustomProtocolRepositoryImpl implements CustomProtocolRepository {
         return new PageImpl<>(resultList, pageable, count);
     }
 
-    private void setQueryParameters(Query query, String name, String createdAt, String doctorId) {
+    private void setQueryParameters(Query query, String name, String createdAt, String doctorId, String patientId) {
         if (name != null && !name.trim().isEmpty()) {
             query.setParameter("name", "%" + name + "%");
         }
@@ -84,5 +91,9 @@ public class CustomProtocolRepositoryImpl implements CustomProtocolRepository {
         if (doctorId != null && !doctorId.trim().isEmpty()) {
             query.setParameter("doctorId", doctorId);
         }
+        if (patientId != null && !patientId.trim().isEmpty()) {
+            query.setParameter("patientId", patientId);
+        }
     }
+
 }

@@ -72,8 +72,8 @@ public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
         }
     }
 
-    public Page<ProtocolDTO> findProtocolsByFilters(String name, String createdAt, String doctorId, Pageable pageable) {
-        return protocolRepository.searchByFilters(name, createdAt, doctorId, pageable).map(protocolMapper::toDto);
+    public Page<ProtocolDTO> findProtocolsByFilters(String name, String createdAt, String doctorId, String patientId, Pageable pageable) {
+        return protocolRepository.searchByFilters(name, createdAt, doctorId, patientId, pageable).map(protocolMapper::toDto);
     }
 
 
