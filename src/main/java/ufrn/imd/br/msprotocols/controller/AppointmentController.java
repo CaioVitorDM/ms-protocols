@@ -29,15 +29,16 @@ public class AppointmentController extends GenericController<Appointment, Appoin
     @GetMapping("/find-appointments")
     public ResponseEntity<ApiResponseDTO<Page<AppointmentDTO>>> findAppointments(
             @ParameterObject Pageable pageable,
-            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String description,
             @RequestParam(required = false) String patientId,
+            @RequestParam(required = false) String doctorId,
             @RequestParam(required = false) String local,
             @RequestParam(required = false) String appointmentDate)
     {
         return ResponseEntity.ok(new ApiResponseDTO<>(
                 true,
                 "Success: appointments retrieved successfully",
-                service.findAppointmentsByFilters(title, patientId, local, appointmentDate, pageable),
+                service.findAppointmentsByFilters(description, patientId, doctorId, local, appointmentDate, pageable),
                 null
         ));
     }

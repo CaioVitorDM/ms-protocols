@@ -7,5 +7,5 @@ import ufrn.imd.br.msprotocols.model.Protocol;
 
 public interface CustomAppointmentRepository {
 
-    Page<Appointment> searchByFilters(String title, String patientId, String local, String appointmentDate, Pageable pageable);
+    Page<Appointment> searchByFilters(String description, String patientId, String doctorId, String local, String appointmentDate, Pageable pageable);
 }

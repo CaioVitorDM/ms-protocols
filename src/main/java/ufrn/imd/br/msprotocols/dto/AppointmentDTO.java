@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.ZonedDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record AppointmentDTO(Long id, String title, Long patientId,
+public record AppointmentDTO(Long id, String description, Long patientId,
                              Long doctorId, String local,
                              ZonedDateTime appointmentDate) implements EntityDTO{
     @Override
     public EntityDTO toResponse() {
         return new AppointmentDTO(
                 this.id(),
-                this.title(),
+                this.description(),
                 this.patientId(),
                 this.doctorId(),
                 this.local(),

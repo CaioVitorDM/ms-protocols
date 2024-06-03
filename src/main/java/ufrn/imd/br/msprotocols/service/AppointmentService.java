@@ -34,7 +34,7 @@ public class AppointmentService implements GenericService<Appointment, Appointme
         return mapper;
     }
 
-    public Page<AppointmentDTO> findAppointmentsByFilters(String title, String patientId, String local, String appointmentDate, Pageable pageable) {
-        return appointmentRepository.searchByFilters(title, patientId, local, appointmentDate, pageable).map(mapper::toDto);
+    public Page<AppointmentDTO> findAppointmentsByFilters(String title, String patientId, String doctorId, String local, String appointmentDate, Pageable pageable) {
+        return appointmentRepository.searchByFilters(title, patientId, doctorId, local, appointmentDate, pageable).map(mapper::toDto);
     }
 }

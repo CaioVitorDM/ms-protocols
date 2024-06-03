@@ -18,7 +18,7 @@ public class Appointment extends BaseEntity {
 
     @NotNull
     @Column(nullable = false)
-    private String title;
+    private String description;
     @NotNull
     @Column(name = "patient_id", nullable = false)
     private Long patientId;
@@ -39,12 +39,12 @@ public class Appointment extends BaseEntity {
         return new AppointmentBuilder();
     }
 
-    public String getTitle() {
-        return title;
+    public String getDescription() {
+        return description;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Long getPatientId() {

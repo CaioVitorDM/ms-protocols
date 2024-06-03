@@ -26,7 +26,8 @@ public class CustomAppointmentRepositoryImpl implements CustomAppointmentReposit
     private static final String INITIAL = "SELECT a FROM Appointment a WHERE a.active = TRUE ";
 
     @Override
-    public Page<Appointment> searchByFilters(String title, String patientId, String local, String appointmentDate, Pageable pageable) {
+    public Page<Appointment> searchByFilters(String description, String patientId, String doctorId,
+                                             String local, String appointmentDate, Pageable pageable) {
         StringBuilder whereClause = new StringBuilder();
 
         String orderField = "appointmentDate";
@@ -38,8 +39,8 @@ public class CustomAppointmentRepositoryImpl implements CustomAppointmentReposit
         }
 
 
-        if (title != null && !title.trim().isEmpty()) {
-            whereClause.append(" AND LOWER(a.title) LIKE LOWER(:title)");
+        if (description != null && !description.trim().isEmpty()) {
+            whereClause.append(" AND LOWER(a.description) LIKE LOWER(:description)");
         }
 
         if (local != null && !local.trim().isEmpty()) {
@@ -53,9 +54,13 @@ public class CustomAppointmentRepositoryImpl implements CustomAppointmentReposit
             whereClause.append(" AND a.patientId = :patientId");
         }
 
+        if (doctorId != null && !doctorId.trim().isEmpty()) {
+            whereClause.append(" AND a.doctorId = :doctorId");
+        }
+
         String countQueryStr = "SELECT COUNT(a) FROM Appointment a WHERE a.active = TRUE" + whereClause;
         Query countQuery = entityManager.createQuery(countQueryStr);
-        setQueryParameters(countQuery, title, patientId, local, appointmentDate);
+        setQueryParameters(countQuery, description, patientId, doctorId, local, appointmentDate);
 
         long count = ((Number) countQuery.getSingleResult()).longValue();
         if (count == 0) {
@@ -65,7 +70,7 @@ public class CustomAppointmentRepositoryImpl implements CustomAppointmentReposit
         // Construção da consulta final com paginação
         String finalQuery = INITIAL + whereClause + " ORDER BY a.appointmentDate DESC";
         Query query = entityManager.createQuery(finalQuery, Appointment.class);
-        setQueryParameters(query, title, patientId, local, appointmentDate);
+        setQueryParameters(query, description, patientId, doctorId, local, appointmentDate);
 
         int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
@@ -76,9 +81,10 @@ public class CustomAppointmentRepositoryImpl implements CustomAppointmentReposit
         return new PageImpl<>(resultList, pageable, count);
     }
 
-    private void setQueryParameters(Query query, String title, String patientId, String local, String appointmentDate) {
-        if (title != null && !title.trim().isEmpty()) {
-            query.setParameter("title", "%" + title + "%");
+    private void setQueryParameters(Query query, String description, String patientId,
+                                    String doctorId, String local, String appointmentDate) {
+        if (description != null && !description.trim().isEmpty()) {
+            query.setParameter("description", "%" + description + "%");
         }
         if (local != null && !local.trim().isEmpty()) {
             query.setParameter("local", "%" + local + "%");
@@ -90,6 +96,10 @@ public class CustomAppointmentRepositoryImpl implements CustomAppointmentReposit
         }
         if (patientId != null && !patientId.trim().isEmpty()) {
             query.setParameter("patientId", patientId);
+        }
+
+        if (doctorId != null && !doctorId.trim().isEmpty()) {
+            query.setParameter("doctorId", doctorId);
         }
     }
 }
