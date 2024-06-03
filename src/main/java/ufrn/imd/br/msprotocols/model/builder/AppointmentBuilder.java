@@ -2,6 +2,7 @@ package ufrn.imd.br.msprotocols.model.builder;
 
 import ufrn.imd.br.msprotocols.model.Appointment;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 public class AppointmentBuilder {
@@ -11,7 +12,7 @@ public class AppointmentBuilder {
     private Long patientId;
     private Long doctorId;
     private String local;
-    private ZonedDateTime appointmentDate;
+    private LocalDate appointmentDate;
 
     public AppointmentBuilder id(Long id) {
         this.id = id;
@@ -38,7 +39,7 @@ public class AppointmentBuilder {
         return this;
     }
 
-    public AppointmentBuilder appointmentDate(ZonedDateTime appointmentDate) {
+    public AppointmentBuilder appointmentDate(LocalDate appointmentDate) {
         this.appointmentDate = appointmentDate;
         return this;
     }

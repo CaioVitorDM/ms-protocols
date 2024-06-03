@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.Where;
 import ufrn.imd.br.msprotocols.model.builder.AppointmentBuilder;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
@@ -33,7 +34,7 @@ public class Appointment extends BaseEntity {
 
     @NotNull
     @Column(name = "appointment_date", nullable = false)
-    private ZonedDateTime appointmentDate;
+    private LocalDate appointmentDate;
 
     public static AppointmentBuilder builder(){
         return new AppointmentBuilder();
@@ -71,11 +72,11 @@ public class Appointment extends BaseEntity {
         this.local = local;
     }
 
-    public ZonedDateTime getAppointmentDate() {
+    public LocalDate getAppointmentDate() {
         return appointmentDate;
     }
 
-    public void setAppointmentDate(ZonedDateTime appointmentDate) {
+    public void setAppointmentDate(LocalDate appointmentDate) {
         this.appointmentDate = appointmentDate;
     }
 
