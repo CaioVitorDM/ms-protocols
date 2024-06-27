@@ -42,4 +42,17 @@ public class AppointmentController extends GenericController<Appointment, Appoin
         ));
     }
 
+    @PutMapping("/edit-appointment")
+    public ResponseEntity<ApiResponseDTO<AppointmentDTO>> updateAppointment
+            (@Valid @RequestBody AppointmentDTO dto){
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ApiResponseDTO<>(
+                        true,
+                        "Sucesso: Appointment edited.",
+                        service.update(dto),
+                        null
+                )
+        );
+    }
 }
