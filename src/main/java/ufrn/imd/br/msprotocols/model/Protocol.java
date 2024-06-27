@@ -24,19 +24,18 @@ public class Protocol extends BaseEntity {
     private String description;
 
     @NotNull
-    @Column(name = "file_id", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private Long fileId;
 
     @NotNull
-    @Column(name = "doctor_id", nullable = false)
+    @Column(nullable = false)
     private Long doctorId;
 
-    @Column(name = "patients_id_list")
     @ElementCollection
     private List<Long> patientsIdList;
 
     @NotNull
-    @Column(name = "is_specific", nullable = false)
+    @Column(nullable = false)
     private Boolean isSpecific;
 
     public static ProtocolBuilder builder(){

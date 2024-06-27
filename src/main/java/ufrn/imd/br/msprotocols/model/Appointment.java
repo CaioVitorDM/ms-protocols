@@ -21,11 +21,11 @@ public class Appointment extends BaseEntity {
     @Column(nullable = false)
     private String description;
     @NotNull
-    @Column(name = "patient_id", nullable = false)
+    @Column(nullable = false)
     private Long patientId;
 
     @NotNull
-    @Column(name = "doctor_id", nullable = false)
+    @Column(nullable = false)
     private Long doctorId;
 
     @NotBlank
@@ -33,7 +33,7 @@ public class Appointment extends BaseEntity {
     private String local;
 
     @NotNull
-    @Column(name = "appointment_date", nullable = false)
+    @Column(nullable = false)
     private LocalDate appointmentDate;
 
     public static AppointmentBuilder builder(){

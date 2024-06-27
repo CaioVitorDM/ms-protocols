@@ -17,7 +17,6 @@ import ufrn.imd.br.msprotocols.repository.GenericRepository;
 import ufrn.imd.br.msprotocols.repository.ProtocolRepository;
 import ufrn.imd.br.msprotocols.utils.exception.BusinessException;
 
-@Transactional
 @Service
 public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
 
