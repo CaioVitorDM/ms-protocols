@@ -4,12 +4,10 @@ import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ufrn.imd.br.msprotocols.dto.ApiResponseDTO;
-import ufrn.imd.br.msprotocols.dto.EntityDTO;
 import ufrn.imd.br.msprotocols.dto.ProtocolDTO;
 import ufrn.imd.br.msprotocols.model.Protocol;
 import ufrn.imd.br.msprotocols.service.ProtocolService;
@@ -57,6 +55,20 @@ public class ProtocolController extends GenericController<Protocol, ProtocolDTO,
                 service.findProtocolsByFilters(name, createdAt, doctorId, patientId, pageable),
                 null
         ));
+    }
+
+    @PutMapping("/edit-protocol")
+    public ResponseEntity<ApiResponseDTO<ProtocolDTO>> updateProtocol
+            (@Valid @RequestBody ProtocolDTO dto){
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ApiResponseDTO<>(
+                        true,
+                        "Sucesso: Protocol edited.",
+                        service.update(dto),
+                        null
+                )
+        );
     }
 
 
