@@ -3,6 +3,7 @@ package ufrn.imd.br.msprotocols.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import ufrn.imd.br.msprotocols.mappers.DtoMapper;
 import ufrn.imd.br.msprotocols.model.BaseEntity;
 import ufrn.imd.br.msprotocols.repository.GenericRepository;
@@ -65,9 +66,9 @@ public interface GenericService<E extends BaseEntity, DTO> {
      * @param dto The DTO representing the entity to be created.
      * @return The DTO representing the created entity.
      */
-    default DTO create(DTO dto) {
+    default DTO create(DTO dto, String token) {
         E entity = getDtoMapper().toEntity(dto);
-        validateBeforeSave(entity);
+        validateBeforeSave(entity, token);
         return getDtoMapper().toDto(getRepository().save(entity));
     }
 
@@ -78,7 +79,7 @@ public interface GenericService<E extends BaseEntity, DTO> {
      * @param dto The DTO representing the updated entity.
      * @return The DTO representing the updated entity.
      */
-    default DTO update(Long id, DTO dto) {
+    default DTO update(Long id, DTO dto, String token) {
 
         var entityExists = getRepository().existsById(id);
         if (!entityExists)
@@ -86,7 +87,7 @@ public interface GenericService<E extends BaseEntity, DTO> {
 
         E updatedEntity = getDtoMapper().toEntity(dto);
         updatedEntity.setId(id);
-        validateBeforeUpdate(updatedEntity);
+        validateBeforeUpdate(updatedEntity, token);
 
         return getDtoMapper().toDto(getRepository().save(updatedEntity));
     }
@@ -105,16 +106,12 @@ public interface GenericService<E extends BaseEntity, DTO> {
      *
      * @param entity The entity to be validated.
      */
-    default void validateBeforeSave(E entity) {
-        GenericEntityValidator.validate(entity);
-    }
+    public abstract void validateBeforeSave(E entity, String token);
 
     /**
      * Validates the entity before updating.
      *
      * @param entity The entity to be validated.
      */
-    default void validateBeforeUpdate(E entity) {
-        GenericEntityValidator.validate(entity);
-    }
+    public abstract void validateBeforeUpdate(E entity, String token);
 }

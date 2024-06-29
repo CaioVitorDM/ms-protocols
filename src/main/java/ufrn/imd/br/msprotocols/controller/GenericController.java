@@ -80,11 +80,12 @@ public abstract class GenericController<E extends BaseEntity, DTO extends Entity
      * @return ResponseEntity containing the DTO and status 201 (CREATED).
      */
     @PostMapping
-    public ResponseEntity<ApiResponseDTO<EntityDTO>> create(@Valid @RequestBody DTO dto) {
+    public ResponseEntity<ApiResponseDTO<EntityDTO>> create(@Valid @RequestBody DTO dto,
+                                                            @RequestHeader("Authorization") String token) {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDTO<>(
                 true,
                 "Sucess: Entity created successfully..",
-                service.create(dto).toResponse(),
+                service.create(dto, token).toResponse(),
                 null));
     }
 
@@ -96,11 +97,11 @@ public abstract class GenericController<E extends BaseEntity, DTO extends Entity
      * @return ResponseEntity containing the DTO and status 200 (OK).
      */
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO<EntityDTO>> update(@PathVariable("id") Long id, @Valid @RequestBody DTO dto) {
+    public ResponseEntity<ApiResponseDTO<EntityDTO>> update(@PathVariable("id") Long id, @Valid @RequestBody DTO dto, @RequestHeader("Authorization") String token) {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDTO<>(
                 true,
                 "Sucess: Entity has been successfully updated.",
-                service.update(id, dto).toResponse(),
+                service.update(id, dto, token).toResponse(),
                 null));
     }
 

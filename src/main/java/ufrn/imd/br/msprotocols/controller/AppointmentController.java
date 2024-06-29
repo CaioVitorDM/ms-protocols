@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ufrn.imd.br.msprotocols.dto.ApiResponseDTO;
 import ufrn.imd.br.msprotocols.dto.AppointmentDTO;
-import ufrn.imd.br.msprotocols.dto.ProtocolDTO;
+import ufrn.imd.br.msprotocols.dto.EntityDTO;
 import ufrn.imd.br.msprotocols.model.Appointment;
 import ufrn.imd.br.msprotocols.service.AppointmentService;
 
@@ -32,8 +32,7 @@ public class AppointmentController extends GenericController<Appointment, Appoin
             @RequestParam(required = false) String patientId,
             @RequestParam(required = false) String doctorId,
             @RequestParam(required = false) String local,
-            @RequestParam(required = false) String appointmentDate)
-    {
+            @RequestParam(required = false) String appointmentDate) {
         return ResponseEntity.ok(new ApiResponseDTO<>(
                 true,
                 "Success: appointments retrieved successfully",
@@ -44,13 +43,13 @@ public class AppointmentController extends GenericController<Appointment, Appoin
 
     @PutMapping("/edit-appointment")
     public ResponseEntity<ApiResponseDTO<AppointmentDTO>> updateAppointment
-            (@Valid @RequestBody AppointmentDTO dto){
+            (@Valid @RequestBody AppointmentDTO dto, @RequestHeader("Authorization") String token) {
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ApiResponseDTO<>(
                         true,
                         "Sucesso: Appointment edited.",
-                        service.update(dto),
+                        service.update(dto, token),
                         null
                 )
         );

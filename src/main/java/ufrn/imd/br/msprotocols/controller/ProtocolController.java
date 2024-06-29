@@ -59,13 +59,13 @@ public class ProtocolController extends GenericController<Protocol, ProtocolDTO,
 
     @PutMapping("/edit-protocol")
     public ResponseEntity<ApiResponseDTO<ProtocolDTO>> updateProtocol
-            (@Valid @RequestBody ProtocolDTO dto){
+            (@Valid @RequestBody ProtocolDTO dto, @RequestHeader("Authorization") String token){
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ApiResponseDTO<>(
                         true,
                         "Sucesso: Protocol edited.",
-                        service.update(dto),
+                        service.update(dto, token),
                         null
                 )
         );
