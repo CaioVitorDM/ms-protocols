@@ -167,6 +167,17 @@ public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
 
     @Override
     public void validateBeforeSave(Protocol entity, String token){
+
+        if (!entity.getSpecific()) {
+            entity.setPatientsIdList(new ArrayList<>());
+        } else {
+            if (entity.getPatientsIdList() == null || entity.getPatientsIdList().isEmpty()) {
+                throw new IllegalArgumentException("Quando protocolo é especifico, a lista de pacientes não pode ser nula ou vazia.");
+            } else {
+                validatePatients(entity.getPatientsIdList(), token);
+            }
+        }
+
         GenericEntityValidator.validate(entity);
         validateFileId(entity.getFileId(), token);
         validateDoctor(entity.getDoctorId(), token);
@@ -175,6 +186,17 @@ public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
 
     @Override
     public void validateBeforeUpdate(Protocol entity, String token) {
+
+        if (!entity.getSpecific()) {
+            entity.setPatientsIdList(new ArrayList<>());
+        } else {
+            if (entity.getPatientsIdList() == null || entity.getPatientsIdList().isEmpty()) {
+                throw new IllegalArgumentException("Quando protocolo é especifico, a lista de pacientes não pode ser nula ou vazia.");
+            } else {
+                validatePatients(entity.getPatientsIdList(), token);
+            }
+        }
+
         GenericEntityValidator.validate(entity);
         validateFileId(entity.getFileId(), entity.getId(), token);
         validateDoctor(entity.getDoctorId(), token);
