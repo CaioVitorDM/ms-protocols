@@ -3,6 +3,9 @@ package ufrn.imd.br.msprotocols.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -94,6 +97,21 @@ public class CustomProtocolRepositoryImpl implements CustomProtocolRepository {
         if (patientId != null && !patientId.trim().isEmpty()) {
             query.setParameter("patientId", patientId);
         }
+    }
+
+    public List<Protocol> findByDoctorIdOrderByCreatedAtDesc(Long doctorId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Protocol> query = cb.createQuery(Protocol.class);
+        Root<Protocol> protocol = query.from(Protocol.class);
+
+        query.select(protocol)
+                .where(cb.equal(protocol.get("doctorId"), doctorId))
+                .orderBy(cb.desc(protocol.get("createdAt")))
+                .distinct(true);
+
+        return entityManager.createQuery(query)
+                .setMaxResults(5)
+                .getResultList();
     }
 
 }

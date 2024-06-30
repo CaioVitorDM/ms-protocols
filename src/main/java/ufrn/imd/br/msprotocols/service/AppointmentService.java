@@ -21,6 +21,7 @@ import ufrn.imd.br.msprotocols.utils.validators.GenericEntityValidator;
 
 import java.beans.PropertyDescriptor;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service

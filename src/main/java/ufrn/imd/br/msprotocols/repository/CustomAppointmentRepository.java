@@ -5,7 +5,11 @@ import org.springframework.data.domain.Pageable;
 import ufrn.imd.br.msprotocols.model.Appointment;
 import ufrn.imd.br.msprotocols.model.Protocol;
 
+import java.util.List;
+
 public interface CustomAppointmentRepository {
 
     Page<Appointment> searchByFilters(String description, String patientId, String doctorId, String local, String appointmentDate, Pageable pageable);
+
 }
+

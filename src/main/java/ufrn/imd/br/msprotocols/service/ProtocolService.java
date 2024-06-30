@@ -4,6 +4,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import ufrn.imd.br.msprotocols.mappers.DtoMapper;
 
 import java.beans.PropertyDescriptor;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import ufrn.imd.br.msprotocols.mappers.ProtocolMapper;
 import ufrn.imd.br.msprotocols.model.Protocol;
@@ -58,6 +60,7 @@ public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
     public ProtocolDTO update(ProtocolDTO dto, String token){
         Protocol updatedEntity = protocolMapper.toEntity(dto);
         Long protocolId = dto.id();
+
 
         Protocol bdEntity = protocolRepository.findById(protocolId).orElseThrow(() -> new BusinessException(
                 "Error: Protocol not found with id [" + protocolId + "]", HttpStatus.NOT_FOUND
@@ -164,6 +167,13 @@ public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
         }
     }
 
+    public void validateProtocolName(Protocol entity) {
+        Optional<Protocol> protocol = protocolRepository.findByName(entity.getName());
+        if (protocol.isPresent() && !protocol.get().getId().equals(entity.getId())) {
+            throw new BusinessException("Nome inválido: " + entity.getName() + ". Já existe outro protocolo cadastrado com esse nome.", HttpStatus.BAD_REQUEST);        }
+    }
+
+
 
     @Override
     public void validateBeforeSave(Protocol entity, String token){
@@ -172,13 +182,14 @@ public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
             entity.setPatientsIdList(new ArrayList<>());
         } else {
             if (entity.getPatientsIdList() == null || entity.getPatientsIdList().isEmpty()) {
-                throw new IllegalArgumentException("Quando protocolo é especifico, a lista de pacientes não pode ser nula ou vazia.");
+                throw new BusinessException("For specific protocols, the patient list must not be null or empty.", HttpStatus.BAD_REQUEST);
             } else {
                 validatePatients(entity.getPatientsIdList(), token);
             }
         }
 
         GenericEntityValidator.validate(entity);
+        validateProtocolName(entity);
         validateFileId(entity.getFileId(), token);
         validateDoctor(entity.getDoctorId(), token);
         validatePatients(entity.getPatientsIdList(), token);
@@ -191,17 +202,24 @@ public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
             entity.setPatientsIdList(new ArrayList<>());
         } else {
             if (entity.getPatientsIdList() == null || entity.getPatientsIdList().isEmpty()) {
-                throw new IllegalArgumentException("Quando protocolo é especifico, a lista de pacientes não pode ser nula ou vazia.");
+                throw new BusinessException("For specific protocols, the patient list must not be null or empty.", HttpStatus.BAD_REQUEST);
             } else {
                 validatePatients(entity.getPatientsIdList(), token);
             }
         }
 
         GenericEntityValidator.validate(entity);
+        validateProtocolName(entity);
         validateFileId(entity.getFileId(), entity.getId(), token);
         validateDoctor(entity.getDoctorId(), token);
         validatePatients(entity.getPatientsIdList(), token);
     }
 
+    public List<ProtocolDTO> findByDoctorId(Long doctorId) {
+        List<Protocol> protocolList = protocolRepository.findByDoctorIdOrderByCreatedAtDesc(doctorId);
+        return protocolList.stream()
+                .map(protocolMapper::toDto)
+                .collect(Collectors.toList());
+    }
 
 }

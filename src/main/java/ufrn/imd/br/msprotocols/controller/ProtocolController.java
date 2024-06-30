@@ -13,6 +13,7 @@ import ufrn.imd.br.msprotocols.model.Protocol;
 import ufrn.imd.br.msprotocols.service.ProtocolService;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/protocols")
@@ -64,11 +65,24 @@ public class ProtocolController extends GenericController<Protocol, ProtocolDTO,
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ApiResponseDTO<>(
                         true,
-                        "Sucesso: Protocol edited.",
+                        "Sucess: Protocol edited.",
                         service.update(dto, token),
                         null
                 )
         );
+    }
+
+
+    @GetMapping("/find-by-doctor")
+    public ResponseEntity<ApiResponseDTO<List<ProtocolDTO>>> findByDoctorId(
+            @RequestParam Long doctorId) {
+        List<ProtocolDTO> protocols = service.findByDoctorId(doctorId);
+        return ResponseEntity.ok(new ApiResponseDTO<>(
+                true,
+                "Success: Protocols retrieved successfully.",
+                protocols,
+                null
+        ));
     }
 
 

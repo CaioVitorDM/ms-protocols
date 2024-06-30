@@ -10,4 +10,7 @@ public interface ProtocolRepository extends GenericRepository<Protocol>, CustomP
     boolean existsByFileId(Long id);
     Optional<Protocol> findByFileIdAndIdNot(Long fileId, Long protocolId);
 
+    Optional<Protocol> findByName(String name);
+
+
 }
