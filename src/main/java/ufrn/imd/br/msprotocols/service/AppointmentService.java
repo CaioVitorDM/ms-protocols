@@ -99,23 +99,23 @@ public class AppointmentService implements GenericService<Appointment, Appointme
     public void validatePatient(Long patientId, String token) {
         ResponseEntity<ApiResponseDTO<Boolean>> responseEntity = userClient.isValidPatient(token, patientId);
         if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null) {
-            throw new BusinessException("Failure in communication with authentication service", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new BusinessException("Falha na comunicação com o serviço de autenticação.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         ApiResponseDTO<Boolean> response = responseEntity.getBody();
         if (response.getData() == null || !response.getData()) {
-            throw new BusinessException("Invalid patient ID: " + patientId, HttpStatus.BAD_REQUEST);
+            throw new BusinessException("ID de paciente inválido: " + patientId, HttpStatus.BAD_REQUEST);
         }
     }
     public void validateDoctor(Long doctorId, String token) {
         ResponseEntity<ApiResponseDTO<Boolean>> responseEntity = userClient.isValidDoctor(token, doctorId);
         if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null) {
-            throw new BusinessException("Failure in communication with authentication service", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new BusinessException("Falha na comunicação com o serviço de autenticação.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         ApiResponseDTO<Boolean> response = responseEntity.getBody();
         if (response.getData() == null || !response.getData()) {
-            throw new BusinessException("Invalid doctor ID: " + doctorId, HttpStatus.BAD_REQUEST);
+            throw new BusinessException("ID de médico inválido: " + doctorId, HttpStatus.BAD_REQUEST);
         }
     }
 

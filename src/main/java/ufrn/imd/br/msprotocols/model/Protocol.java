@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.Where;
 import ufrn.imd.br.msprotocols.model.builder.ProtocolBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,30 +18,31 @@ import java.util.Objects;
 @Where(clause = "active = true")
 public class Protocol extends BaseEntity {
 
-    @NotBlank
+    @NotBlank(message = "Error: O nome não pode estar vazio.")
     @Column(nullable = false, unique = true)
     private String name;
 
     private String description;
 
-    @NotNull
+    @NotNull(message = "Error: O ID do arquivo não pode ser nulo.")
     @Column(nullable = false, unique = true)
     private Long fileId;
 
-    @NotNull
+    @NotNull(message = "Error: O ID do médico não pode ser nulo.")
     @Column(nullable = false)
     private Long doctorId;
 
     @ElementCollection
     private List<Long> patientsIdList;
 
-    @NotNull
+    @NotNull(message = "Error: Especifidade não pode ser nulo.")
     @Column(nullable = false)
     private Boolean isSpecific;
 
     public static ProtocolBuilder builder(){
         return new ProtocolBuilder();
     }
+
 
     public String getName() {
         return name;

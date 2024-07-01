@@ -99,58 +99,34 @@ public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
 
         ResponseEntity<ApiResponseDTO<Boolean>> responseEntity = userClient.isValidDoctor(token, doctorId);
         if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null) {
-            throw new BusinessException("Failure in communication with authentication service", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new BusinessException("Falha na comunicação com o serviço de autenticação.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         ApiResponseDTO<Boolean> response = responseEntity.getBody();
         if (response.getData() == null || !response.getData()) {
-            throw new BusinessException("Invalid doctor ID: " + doctorId, HttpStatus.BAD_REQUEST);
+            throw new BusinessException("ID do médico inválido: " + doctorId, HttpStatus.BAD_REQUEST);
         }
-
     }
+
 
     private void validateFileId(Long fileId, Long protocolId, String token) {
 
         ResponseEntity<ApiResponseDTO<Boolean>> responseEntity = fileClient.isValidFile(token, fileId);
         if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null) {
-            throw new BusinessException("Failure in communication with file service", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new BusinessException("Falha na comunicação com o serviço de arquivos.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         ApiResponseDTO<Boolean> response = responseEntity.getBody();
         if (response.getData() == null || !response.getData()) {
-            throw new BusinessException("Invalid file ID: " + fileId, HttpStatus.BAD_REQUEST);
+            throw new BusinessException("ID do arquivo inválido: " + fileId, HttpStatus.BAD_REQUEST);
         }
 
         Optional<Protocol> existingProtocolWithFile = protocolRepository.findByFileIdAndIdNot(fileId, protocolId);
-
         if (existingProtocolWithFile.isPresent()) {
-            throw new BusinessException(
-                    "Arquivo inválido: " + fileId + ". Já existe outro protocolo cadastrado com esse arquivo.",
-                    HttpStatus.BAD_REQUEST
-            );
+            throw new BusinessException("Arquivo inválido: " + fileId + ". Já existe outro protocolo cadastrado com esse arquivo.", HttpStatus.BAD_REQUEST);
         }
     }
 
-
-    private void validateFileId(Long id, String token){
-
-        ResponseEntity<ApiResponseDTO<Boolean>> responseEntity = fileClient.isValidFile(token, id);
-        if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null) {
-            throw new BusinessException("Failure in communication with file service", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        ApiResponseDTO<Boolean> response = responseEntity.getBody();
-        if (response.getData() == null || !response.getData()) {
-            throw new BusinessException("Invalid file ID: " + id, HttpStatus.BAD_REQUEST);
-        }
-
-        if(protocolRepository.existsByFileId(id)){
-            throw new BusinessException(
-                    "Arquivo inválido: " + id + ". Já existe um protocolo cadastrado com esse arquivo.",
-                    HttpStatus.BAD_REQUEST
-            );
-        }
-    }
 
     private void validatePatients(List<Long> patientsIdList, String token) {
         ResponseEntity<ApiResponseDTO<Map<Long, Boolean>>> response = userClient.checkPatientsExistence(token, patientsIdList);
@@ -159,38 +135,39 @@ public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
             Map<Long, Boolean> patientExistenceMap = response.getBody().getData();
             for (Map.Entry<Long, Boolean> entry : patientExistenceMap.entrySet()) {
                 if (!entry.getValue()) {
-                    throw new BusinessException("Invalid patient ID: " + entry.getKey(), HttpStatus.BAD_REQUEST);
+                    throw new BusinessException("ID de paciente inválido: " + entry.getKey(), HttpStatus.BAD_REQUEST);
                 }
             }
         } else {
-            throw new BusinessException("Error checking patient IDs", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new BusinessException("Erro ao verificar os IDs dos pacientes", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     public void validateProtocolName(Protocol entity) {
         Optional<Protocol> protocol = protocolRepository.findByName(entity.getName());
         if (protocol.isPresent() && !protocol.get().getId().equals(entity.getId())) {
-            throw new BusinessException("Nome inválido: " + entity.getName() + ". Já existe outro protocolo cadastrado com esse nome.", HttpStatus.BAD_REQUEST);        }
+            throw new BusinessException("Nome inválido: " + entity.getName() + ". Já existe outro protocolo cadastrado com esse nome.", HttpStatus.BAD_REQUEST);
+        }
     }
+
 
 
 
     @Override
     public void validateBeforeSave(Protocol entity, String token){
 
-        if (!entity.getSpecific()) {
-            entity.setPatientsIdList(new ArrayList<>());
-        } else {
+        GenericEntityValidator.validate(entity);
+
+        if (entity.getSpecific()) {
             if (entity.getPatientsIdList() == null || entity.getPatientsIdList().isEmpty()) {
-                throw new BusinessException("For specific protocols, the patient list must not be null or empty.", HttpStatus.BAD_REQUEST);
+                throw new BusinessException("Para protocolos específicos, a lista de pacientes não pode ser nula ou vazia.", HttpStatus.BAD_REQUEST);
             } else {
                 validatePatients(entity.getPatientsIdList(), token);
             }
         }
 
-        GenericEntityValidator.validate(entity);
         validateProtocolName(entity);
-        validateFileId(entity.getFileId(), token);
+        validateFileId(entity.getFileId(), null, token);
         validateDoctor(entity.getDoctorId(), token);
         validatePatients(entity.getPatientsIdList(), token);
     }
@@ -198,17 +175,16 @@ public class ProtocolService implements GenericService<Protocol, ProtocolDTO>{
     @Override
     public void validateBeforeUpdate(Protocol entity, String token) {
 
-        if (!entity.getSpecific()) {
-            entity.setPatientsIdList(new ArrayList<>());
-        } else {
+        GenericEntityValidator.validate(entity);
+
+        if (entity.getSpecific()) {
             if (entity.getPatientsIdList() == null || entity.getPatientsIdList().isEmpty()) {
-                throw new BusinessException("For specific protocols, the patient list must not be null or empty.", HttpStatus.BAD_REQUEST);
+                throw new BusinessException("Para protocolos específicos, a lista de pacientes não pode ser nula ou vazia.", HttpStatus.BAD_REQUEST);
             } else {
                 validatePatients(entity.getPatientsIdList(), token);
             }
         }
 
-        GenericEntityValidator.validate(entity);
         validateProtocolName(entity);
         validateFileId(entity.getFileId(), entity.getId(), token);
         validateDoctor(entity.getDoctorId(), token);

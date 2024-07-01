@@ -3,7 +3,9 @@ package ufrn.imd.br.msprotocols.model.builder;
 import ufrn.imd.br.msprotocols.model.Protocol;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ProtocolBuilder {
 
@@ -33,7 +35,7 @@ public class ProtocolBuilder {
     }
 
     public ProtocolBuilder patientsIdList(List<Long> patientsIdList){
-        this.patientsIdList = patientsIdList;
+        this.patientsIdList = Objects.requireNonNullElseGet(patientsIdList, ArrayList::new);
         return this;
     }
 

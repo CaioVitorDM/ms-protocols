@@ -17,22 +17,23 @@ import java.util.Objects;
 @Where(clause = "active = true")
 public class Appointment extends BaseEntity {
 
-    @NotNull
+    @NotBlank(message = "Error: A descrição não pode estar vazia.")
     @Column(nullable = false)
     private String description;
-    @NotNull
+
+    @NotNull(message = "Error: O ID do paciente não pode ser nulo.")
     @Column(nullable = false)
     private Long patientId;
 
-    @NotNull
+    @NotNull(message = "Error: O ID do médico não pode ser nulo.")
     @Column(nullable = false)
     private Long doctorId;
 
-    @NotBlank
+    @NotBlank(message = "Error: O local não pode estar vazio.")
     @Column(nullable = false)
     private String local;
 
-    @NotNull
+    @NotNull(message = "Error: Data não pode ser nula.")
     @Column(nullable = false)
     private LocalDate appointmentDate;
 
