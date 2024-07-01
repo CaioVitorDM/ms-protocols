@@ -20,7 +20,9 @@ import ufrn.imd.br.msprotocols.utils.exception.BusinessException;
 import ufrn.imd.br.msprotocols.utils.validators.GenericEntityValidator;
 
 import java.beans.PropertyDescriptor;
+import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -50,6 +52,15 @@ public class AppointmentService implements GenericService<Appointment, Appointme
 
     public Page<AppointmentDTO> findAppointmentsByFilters(String title, String patientId, String doctorId, String local, String appointmentDate, Pageable pageable) {
         return appointmentRepository.searchByFilters(title, patientId, doctorId, local, appointmentDate, pageable).map(mapper::toDto);
+    }
+
+    public AppointmentDTO findNextAppointment(String doctorId) {
+        LocalDate today = LocalDate.now();
+        List<Appointment> upcomingAppointments = appointmentRepository.findNextAppointment(doctorId, today);
+        if (upcomingAppointments != null && !upcomingAppointments.isEmpty()) {
+            return mapper.toDto(upcomingAppointments.get(0));
+        }
+        return null;
     }
 
     public AppointmentDTO update(AppointmentDTO dto, String token){

@@ -54,4 +54,25 @@ public class AppointmentController extends GenericController<Appointment, Appoin
                 )
         );
     }
+
+    @GetMapping("/next-appointment")
+    public ResponseEntity<ApiResponseDTO<AppointmentDTO>> findNextAppointment(
+            @RequestParam String doctorId) {
+        AppointmentDTO nextAppointment = service.findNextAppointment(doctorId);
+        if (nextAppointment != null) {
+            return ResponseEntity.ok(new ApiResponseDTO<>(
+                    true,
+                    "Success: next appointment retrieved successfully",
+                    nextAppointment,
+                    null
+            ));
+        } else {
+            return ResponseEntity.ok(new ApiResponseDTO<>(
+                    false,
+                    "No upcoming appointments found",
+                    null,
+                    null
+            ));
+        }
+    }
 }
